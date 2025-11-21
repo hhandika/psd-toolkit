@@ -34,7 +34,7 @@ Repository = "https://github.com/hhandika/psd-toolkit"
 Issues = "https://github.com/hhandika/psd-toolkit/issues"
 
 [project.scripts]
-psd-toolkit = "psd_toolkit.main:main"
+psd-toolkit = "main:main"
 
 [dependency-groups]
 dev = ["pytest>=9.0.1"]
