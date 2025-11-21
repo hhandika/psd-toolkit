@@ -23,6 +23,9 @@ jobs:
               with:
                   version: latest
 
+            - name: Sync (install) dependencies
+              run: uv sync --frozen
+
             - name: Build package
               run: uv build
 
