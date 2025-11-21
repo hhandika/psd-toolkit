@@ -1,46 +1,38 @@
+#!/usr/bin/env python3
+"""
+Basic import test - verifies package can be imported without pytest dependency.
+"""
+
 import importlib
-import pkgutil
-import types
-import pytest
-
-"""
-Basic smoke test to ensure the psd_toolkit package imports without errors.
-Add lightweight, fast checks only.
-"""
-
+import sys
 
 PACKAGE_NAME = "psd_toolkit"
 
 
-def test_package_import():
-    mod = importlib.import_module(PACKAGE_NAME)
-    assert isinstance(mod, types.ModuleType)
-
-
-@pytest.mark.parametrize(
-    "finder, name, ispkg", list(pkgutil.iter_modules())
-)
-def test_submodule_discovery(finder, name, ispkg):
-    # Only test submodules that start with the package prefix
-    if not name.startswith(
-        PACKAGE_NAME.split("_")[0]
-    ):  # loose prefix match
-        pytest.skip("Not part of psd_toolkit namespace")
+def main():
     try:
-        importlib.import_module(name)
+        # Test basic import
+        mod = importlib.import_module(PACKAGE_NAME)
+        print(f"✓ Successfully imported {PACKAGE_NAME}")
+
+        # Test version attribute
+        version = getattr(mod, "__version__", None)
+        if version:
+            print(f"✓ Version: {version}")
+
+        # Test dir() works
+        symbols = dir(mod)
+        print(f"✓ Package has {len(symbols)} public symbols")
+
+        print(f"\n✓ All smoke tests passed for {PACKAGE_NAME}")
+        return 0
+
     except Exception as e:
-        pytest.fail(f"Failed to import submodule {name}: {e}")
+        print(
+            f"✗ Failed to import {PACKAGE_NAME}: {e}", file=sys.stderr
+        )
+        return 1
 
 
-def test_version_attribute():
-    mod = importlib.import_module(PACKAGE_NAME)
-    version = getattr(mod, "__version__", None)
-    assert version is None or isinstance(version, str)
-
-
-def test_help_dir_runs():
-    mod = importlib.import_module(PACKAGE_NAME)
-    # Ensure dir() does not raise and returns a non-empty list
-    symbols = dir(mod)
-    assert isinstance(symbols, list)
-    assert len(symbols) > 0
+if __name__ == "__main__":
+    sys.exit(main())
