@@ -2,6 +2,7 @@ import argparse
 import sys
 from pathlib import Path
 from psd.processor import PSDProcessor
+from tqdm import tqdm
 
 
 class BatchJob:
@@ -40,13 +41,10 @@ class BatchJob:
             f"Found {total_files} PSD file(s). Starting process...\n"
         )
 
-        for i, psd_path in enumerate(files, 1):
-            print(
-                f"[{i}/{total_files}] Processing: {psd_path.name}...",
-                end=" ",
-                flush=True,
-            )
-
+        # Wrap the iterable with tqdm
+        for psd_path in tqdm(
+            files, desc="Processing PSD files", unit="file"
+        ):
             try:
                 processor = PSDProcessor(psd_path)
                 processor.load()
@@ -56,11 +54,14 @@ class BatchJob:
                 dest_path = self._generate_output_path(psd_path)
                 processor.export(dest_path, format=self.output_format)
 
-                print(f"Done. (Hidden {count} layers)")
+                # Use tqdm.write() instead of print() to avoid breaking the progress bar
+                tqdm.write(
+                    f"✓ {psd_path.name}: Hidden {count} layers"
+                )
                 self.stats["success"] += 1
 
             except Exception as e:
-                print(f"\n    X Failed: {e}")
+                tqdm.write(f"✗ {psd_path.name}: Failed - {e}")
                 self.stats["failed"] += 1
 
         self._print_summary(total_files)
