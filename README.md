@@ -1,5 +1,9 @@
 # psd-toolkit
 
+![Tests](https://github.com/hhandika/psd-toolkit/actions/workflows/test.yml/badge.svg)
+![GitHub Tag](https://img.shields.io/github/v/tag/hhandika/psd-toolkit?label=GitHub)
+![PyPI - Version](https://img.shields.io/pypi/v/psd-toolkit?color=blue)
+
 A Python toolkit for batch processing Adobe Photoshop PSD files. Automatically hide text layers and export to PNG format.
 
 ## Features
